@@ -1,0 +1,6 @@
+Name,Nation,City,Address,Lat,Lon,Price,Delivery,OnlinePrenotation,Cuisine,Description,titolare
+Ristorante Bella Italia,Italia,Roma,Viale dei Fori Imperiali,41.8902,12.4923,€€,Yes,Yes,Italian,Traditional Italian cuisine with a modern twist,Giovanni Rossi
+Taco Fiesta,Messico,Città del Messico,Paseo de la Reforma,19.4326,-99.1332,$$,Yes,Yes,Mexican,Spicy tacos and burritos,Juan Hernandez
+Café de Flore,France,Parigi,Boulevard Saint-Germain,48.8534,2.3499,€€,No,Yes,French,Classic Parisian café with a rich history,Marie Dubois
+Pizzeria Napoli,Italia,Napoli,Via Partenope,40.8522,14.2681,€€,Yes,Yes,Italian,Authentic Neapolitan pizza,Luigi Esposito
+Nicolin,Italia,Lecco,Località Maggianico,45.835037,9.414134,€€,Yes,Yes,Italian,Family-run restaurant with homemade pasta,Nicolin Family

@@ -1,0 +1,64 @@
+Storico
+9/7/2025
+Inizio progetto di Lab.A
+Creazione struttura del progetto
+- Classi utente, ristoratore e recensione
+- Classi Utili per lettura e scrittura CSV
+- Classi utili per la ricerca ristoranti
+- Classi utili per i menu
+Prima stesura di una main class
+
+10/7/2025
+Creazione di un sistema Login/Registrazione
+- Menu iniziale con scelta Login, Signin e Guest
+	- Login chiede username e pwd. Controllo nel file utenti.csv
+	- Registrazione chiede le informazioni utili dell'utente
+	- Guest permette funzioni limitate del programma
+
+11/7/2025
+Creazione del sistema di ricerca ristoranti
+- La ricerca avviene tramite inserimento di filtri
+	- La ricerca tramite nome del ristorante era piuttosto broken, ho deciso volutamente di saltarla per il momento
+	- La ricerca tramite "prenotazione online/asporto" era broken, in quanto non posso mettere "null" un valore bool, e nel file dato dalla professoressa, i ristoranti non hanno l'informazione richiesta
+		- Soluzione: Creato file ristoranti.csv. Inseriti ristoranti esempio con le informazioni per la ricerca
+		- Ricerca tramite "prenotazione online/asporto" ancora da implementare
+
+12/7/2025
+Perfezionamento Utente
+- Selezione di un ristorante rimanda alle sue informazioni: Nome, Descrizione e costo
+	- La visualizzazione del costo è ambigua, per il momento funziona, ma non mostra il carattere voluto
+	- Una volta selezionato il ristorante, l'utente accede al menu recensione
+- Sistema di recensioni
+	- Crea/modifica/cancella recensione
+- Lista preferiti
+	- L'utente unico accede alla propria lista preferiti
+	- Un ristorante preferito viene salvato nel file preferiti.csv
+		- il salvataggio avviene salvando utente,ristorante
+		- il caricamento della lista avviene caricando soltanto i ristoranti del rispettivo utente
+
+13/7/2025
+- finire le azioni utente:
+	- Rimozione dai preferiti
+	- controllare che funzioni tutto
+- Utente Ristoratore
+	- Crea ristorante
+		Aggiorna file ristoranti per includere il nome del Ristoratore creatore del ristorante
+		Visualizza elenco ristoranti
+	- Visualizza recensioni del ristorante
+	- Risposta alla recensione
+- Utente Guest
+	- Ricerca del ristorante e visualizzazione delle recensioni in forma anonima
+	- Sistema di Registrazione(già implementato)
+
+14/7/2025
+- Debug finale
+- Stesura javadoc
+    - Generata pagina html(grazie intellij)
+
+15/7/2025
+- Creazione del file jar
+- Controllo finale del funzionamento del tutto
+- File README per l'installazione
+
+16/7/2025
+Consegna del progetto
