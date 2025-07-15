@@ -45,8 +45,8 @@ Per essere eseguito, basta scaricare il file e farci doppio click, oppure tramit
 ```
 
 ## Uso dell'applicazione
-Per una guida pronta all'uso, riferirsi al [Manuale Utente](/doc/Manuale%20Utente.md).  
-Per invece una guida più dettagliata sulle scelte di codice, algoritmi e metodi, riferirsi al [Manuale Tecnico](/doc/Manuale%20Tecnico.md).  
+Per una guida pronta all'uso, riferirsi al [Manuale Utente](/doc/TheKnife%20-%20Manuale%20Utente.pdf).  
+Per invece una guida più dettagliata sulle scelte di codice, algoritmi e metodi, riferirsi al [Manuale Tecnico](/doc/The%20Knife%20-%20Manuale%20Tecnico.pdf).  
 
 ## Bug report
 Se vengono incontrati dei bug, reportarli nella tab [Issues](github.com/Scintilla-git/TheKnife/Issues) di GitHub.  
