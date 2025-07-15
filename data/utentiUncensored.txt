@@ -2,3 +2,4 @@ Lista utenti per provare l'accesso(dato che la password è cifrata :) )
 Davide Suigi    - Username: dev             - Password: davide
 Mario Rossi     - Username: MarioIlCuoco    - Password: marioilcuoco
 Tizio Caio      - Username: tiziocaio       - Password: tizio1
+Giuseppe Verdi  - Username: giuVerdi        - Password: giuverdi

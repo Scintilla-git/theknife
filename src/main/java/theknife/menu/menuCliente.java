@@ -357,7 +357,7 @@ public class menuCliente {
                     }
                     // Carica i ristoranti nella zona del domicilio dell'utente
                     List<Ristorante> tuttiRistorantiZona = UtilsCSV.caricaRistoranti(UtilsCSV.PATH_RISTORANTI);
-                    List<Ristorante> filtratiZona = UtilsRicerca.filtraCombinato(tuttiRistorantiZona, null, domicilio, null, null);
+                    List<Ristorante> filtratiZona = UtilsRicerca.filtraPerLuogo(tuttiRistorantiZona, null, domicilio, null);
 
                     // Se non sono stati trovati ristoranti, informa l'utente
                     if (filtratiZona.isEmpty()) {

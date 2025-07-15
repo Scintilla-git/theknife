@@ -263,7 +263,7 @@ public class UtilsCSV {
      */
     public static List<String> caricaPreferiti(String username) {
         List<String> preferiti = new ArrayList<>();
-        String path = PATH_RECENSIONI;
+        String path = PATH_PREFERITI;
         File file = new File(path);
         if (!file.exists()) return preferiti;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {

@@ -2,3 +2,4 @@ Name,Surname,Username,Password,Birthdate,Address,Type
 Davide,Suigi,dev,c8a2035c91b566a5dffc34d586408a298abf95ca3d706ead1c677b4979a44c57,,Lecco,CLIENTE
 Mario,Rossi,MarioIlCuoco,0aa71a9b28310813eeddd4bf6a76f95b597b69a562d4c16236fe8bcfd1752571,,Lecco,RISTORATORE
 tizio,caio,tiziocaio,d5d4d8bc5d7fbf2321f6b2754815d50528c6d60d01d273765e331d9c708bf492,,Roma,CLIENTE
+Giuseppe,Verdi,giuVerdi,9d504ed8a5ebd748df71b8deecc79f878fc98bb7a5c6230a8cc9f9fd153d6015,,Milano,CLIENTE
