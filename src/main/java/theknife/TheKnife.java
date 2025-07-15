@@ -10,6 +10,7 @@ import theknife.menu.menuRist;
 
 import java.util.List;
 import java.util.Scanner;
+import java.io.Console;
 
 /**
  * Il programma "The Knife" è un'applicazione Java che simula la gestione di un ristorante.<br>
@@ -27,6 +28,7 @@ public class TheKnife {
         // Carica nella lista gli utenti del file CSV
         List<Utente> utenti = UtilsCSV.caricaUtenti(pathUtenti);
         Scanner scanner = new Scanner(System.in);
+        Console console = System.console();
 
         while (true)
         {
@@ -46,8 +48,17 @@ public class TheKnife {
                     //Username e password dell'utente
                     System.out.print("\nUsername: ");
                     String username = scanner.nextLine();
-                    System.out.print("Password: ");
-                    String password = scanner.nextLine();
+                    
+                    String password;
+                    // Uso della libreria java "Console" per la censura della password durante l'inserimento
+                    if (console != null){
+                        char[] pwdArray = console.readPassword("Password: ");
+                        password = new String(pwdArray);
+                    } else {
+                        // Fallback se Console non è disponibile (ad esempio in IDE)
+                        System.out.print("Password: ");
+                        password = scanner.nextLine();
+                    }
 
                     // Verifica delle credenziali
                     Utente u = LoginManager.login(utenti, username, password);
@@ -70,17 +81,54 @@ public class TheKnife {
                     //Inserimento dei dati dell'utente
                     System.out.print("\nNome: ");
                     String nome = scanner.nextLine();
+                    // Controllo che il campo non sia vuoto
+                    while (nome.isBlank()){
+                        System.out.print("Il nome non può essere vuoto. Inserisci il nome:");
+                        nome = scanner.nextLine();
+                    }
                     System.out.print("Cognome: ");
                     String cognome = scanner.nextLine();
+                    // Controllo che il campo non sia vuoto
+                    while (cognome.isBlank()){
+                        System.out.print("Il cognome non può essere vuoto. Inserisci il cognome:");
+                        cognome = scanner.nextLine();
+                    }
                     System.out.print("Username: ");
                     String newUsername = scanner.nextLine();
-                    // Controllo se lo username esiste già
+                    // Controllo che il campo non sia vuoto
+                    while (newUsername.isBlank()){
+                        System.out.print("Lo username è necessario per l'accesso. Inserisci lo username:");
+                        newUsername = scanner.nextLine();
+                    }
+                    // Controllo se lo username esiste già. Se esiste, esce dalla registrazione
                     if (LoginManager.usernameEsiste(utenti, newUsername)) {
                         System.out.println("Username già esistente.");
                         break;
                     }
-                    System.out.print("Password: ");
-                    String newPassword = scanner.nextLine();
+                    
+                    String newpassword;
+                    // Uso della libreria java "Console" per la censura della password durante l'inserimento
+                    if (console != null){
+                        char[] pwdArray = console.readPassword("Password: ");
+                        newpassword = new String(pwdArray);
+                    } else {
+                        // Fallback se Console non è disponibile (ad esempio in IDE)
+                        System.out.print("Password: ");
+                        newpassword = scanner.nextLine();
+                    }
+                    // Controllo che il campo non sia vuoto
+                    while (newpassword.isBlank()){
+                        System.out.print("Per una totale sicurezza dell'account, inserisci una password:");
+                        // Uso della libreria java "Console" per la censura della password durante l'inserimento
+                        if (console != null){
+                            char[] pwdArray = console.readPassword("Password: ");
+                            newpassword = new String(pwdArray);
+                        } else {
+                            // Fallback se Console non è disponibile (ad esempio in IDE)
+                            System.out.print("Password: ");
+                            newpassword = scanner.nextLine();
+                        }
+                    }
                     System.out.print("Luogo di domicilio: ");
                     String luogo = scanner.nextLine();
                     System.out.print("Ruolo (1=Cliente, 2=Ristoratore): ");
@@ -88,7 +136,7 @@ public class TheKnife {
                     Ruolo ruolo = ruoloScelto == 2 ? Ruolo.RISTORATORE : Ruolo.CLIENTE;
 
                     // Salcataggio nel file CSV indicato a inizio file
-                    Utente nuovo = new Utente(nome, cognome, newUsername, LoginManager.hashPassword(newPassword), null, luogo, ruolo);
+                    Utente nuovo = new Utente(nome, cognome, newUsername, LoginManager.hashPassword(newpassword), null, luogo, ruolo);
                     utenti.add(nuovo);
                     UtilsCSV.salvaUtente(pathUtenti, utenti);
                     System.out.println("Registrazione completata!");

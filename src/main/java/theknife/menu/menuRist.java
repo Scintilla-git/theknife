@@ -72,7 +72,7 @@ public class menuRist {
                                 String descrizioneCSV = descrizione.replace(",", "&#44;");
 
                                 // Salva nel CSV aggiungendo il ristoratore come titolare
-                                try (FileWriter fw = new FileWriter("data/ristoranti.csv", true)) {
+                                try (FileWriter fw = new FileWriter(UtilsCSV.PATH_RISTORANTI, true)) {
                                     fw.write(nome + "," + nazione + "," + citta + "," + indirizzo + "," + lat + "," + lon + "," + fasciaPrezzo + "," + prenotazioni + "," + asporto + "," + tipoCucina + "," + descrizioneCSV + "," + utente.getUsername() + "\n");
                                 } catch (IOException e) {
                                     System.err.println("Errore scrittura ristorante: " + e.getMessage());

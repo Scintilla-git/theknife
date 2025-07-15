@@ -53,7 +53,7 @@ public class menuGuest {
                     if (fasciaPrezzo.isBlank()) fasciaPrezzo = null;
 
                     // Carica i ristoranti dal CSV e filtro in base ai criteri
-                    List<Ristorante> ristoranti = UtilsCSV.caricaRistoranti("data/ristoranti.csv");
+                    List<Ristorante> ristoranti = UtilsCSV.caricaRistoranti(UtilsCSV.PATH_RISTORANTI);
                     List<Ristorante> risFiltro = UtilsRicerca.filtraCombinato(ristoranti, nazione, citta, tipoCucina, fasciaPrezzo);
 
                     if (risFiltro.isEmpty()) {
@@ -106,7 +106,7 @@ public class menuGuest {
                         break;
                     }
                     // Carica i ristoranti dal CSV e filtro in base alla zona
-                    List<Ristorante> tuttiRistoranti = UtilsCSV.caricaRistoranti("data/ristoranti.csv");
+                    List<Ristorante> tuttiRistoranti = UtilsCSV.caricaRistoranti(UtilsCSV.PATH_RISTORANTI);
                     List<Ristorante> filtratiZona = UtilsRicerca.filtraCombinato(tuttiRistoranti, null, zona, null, null);
 
                     // Controlla se sono stati trovati ristoranti nella zona

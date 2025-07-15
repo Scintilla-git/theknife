@@ -24,6 +24,12 @@ import java.util.List;
  * @version 1.0
  */
 public class UtilsCSV {
+    // Variabili statiche per i percorsi dei file CSV
+    public static final String PATH_UTENTI = "data/utenti.csv";
+    public static final String PATH_RISTORANTI = "data/ristoranti.csv";
+    public static final String PATH_RECENSIONI = "data/recensioni.csv";
+    public static final String PATH_PREFERITI = "data/preferiti.csv";
+    public static final String PATH_RISPOSTE = "data/risposte.csv";
     /**
      * Carica gli utenti da un file CSV.
      * @param path Il percorso del file CSV.
@@ -94,14 +100,13 @@ public class UtilsCSV {
                 double latitudine = campi[4].isBlank() ? 0.0 : Double.parseDouble(campi[4]);
                 double longitudine = campi[5].isBlank() ? 0.0 : Double.parseDouble(campi[5]);
                 String fasciaPrezzo = campi[6].replace("\"", "");
+                boolean asporto = campi[7].equalsIgnoreCase("Yes");
+                boolean prenotazioneOnline = campi[8].equalsIgnoreCase("Yes");
                 String tipoCucina = campi[9].replace("\"", "");
                 String descrizione = campi[10]
                     .replace("&#44;", ",")
                     .replace("\"", "");
                 String titolare = campi.length > 11 ? campi[11].replace("\"", "") : "";
-
-                boolean asporto = false;
-                boolean prenotazioneOnline = false;
 
                 ristoranti.add(new Ristorante(
                     nome, nazione, citta, indirizzo,
@@ -124,7 +129,7 @@ public class UtilsCSV {
      */
     public static List<Recensione> caricaRecensioniPerRistorante(String nomeRistorante) {
         List<Recensione> recensioni = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("data/recensioni.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(PATH_RECENSIONI))) {
             String line = br.readLine(); // salta intestazione
             while ((line = br.readLine()) != null) {
                 String[] campi = line.split(",", 4);
@@ -155,7 +160,7 @@ public class UtilsCSV {
      */
     public static void salvaRecensione(Recensione rec) {
         // Aggiunge una nuova recensione
-        try (FileWriter fw = new FileWriter("data/recensioni.csv", true)) {
+        try (FileWriter fw = new FileWriter(PATH_RECENSIONI, true)) {
             // Sostituisci solo le virgole con uno spazio o altro carattere, ma lascia la punteggiatura
             String commentoCSV = rec.getCommento().replace(",", "&#44;");
             fw.write(rec.getRistoranteNome() + "," + rec.getAutore().getUsername() + "," + rec.getValutazione() + "," + commentoCSV + "\n");
@@ -171,14 +176,14 @@ public class UtilsCSV {
     public static void aggiornaRecensione(Recensione rec) {
         // Sovrascrive la recensione dell'utente per il ristorante
         List<String> lines = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("data/recensioni.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(PATH_RECENSIONI))) {
             String line = br.readLine();
             if (line != null) lines.add(line); // intestazione
             while ((line = br.readLine()) != null) {
                 String[] campi = line.split(",", 4);
                 if (campi.length < 4) continue;
                 if (campi[0].equals(rec.getRistoranteNome()) && campi[1].equals(rec.getAutore().getUsername())) {
-                    lines.add(rec.getRistoranteNome() + "," + rec.getAutore().getUsername() + "," + rec.getValutazione() + "," + rec.getCommento().replace(",", " "));
+                    lines.add(rec.getRistoranteNome() + "," + rec.getAutore().getUsername() + "," + rec.getValutazione() + "," + rec.getCommento().replace(",", "&#44;"));
                 } else {
                     lines.add(line);
                 }
@@ -186,7 +191,7 @@ public class UtilsCSV {
         } catch (IOException e) {
             System.err.println("Errore lettura recensioni: " + e.getMessage());
         }
-        try (PrintWriter pw = new PrintWriter(new FileWriter("data/recensioni.csv"))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(PATH_RECENSIONI))) {
             for (String l : lines) pw.println(l);
         } catch (IOException e) {
             System.err.println("Errore scrittura recensioni: " + e.getMessage());
@@ -200,7 +205,7 @@ public class UtilsCSV {
     public static void cancellaRecensione(Recensione rec) {
         // Rimuove la recensione dell'utente per il ristorante
         List<String> lines = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("data/recensioni.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(PATH_RECENSIONI))) {
             String line = br.readLine();
             if (line != null) lines.add(line); // intestazione
             while ((line = br.readLine()) != null) {
@@ -213,7 +218,7 @@ public class UtilsCSV {
         } catch (IOException e) {
             System.err.println("Errore lettura recensioni: " + e.getMessage());
         }
-        try (PrintWriter pw = new PrintWriter(new FileWriter("data/recensioni.csv"))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(PATH_RECENSIONI))) {
             for (String l : lines) pw.println(l);
         } catch (IOException e) {
             System.err.println("Errore scrittura recensioni: " + e.getMessage());
@@ -226,7 +231,7 @@ public class UtilsCSV {
      */
     public static List<Recensione> caricaTutteRecensioni() {
         List<Recensione> recensioni = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("data/recensioni.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(PATH_RECENSIONI))) {
             String line = br.readLine(); // salta intestazione
             while ((line = br.readLine()) != null) {
                 String[] campi = line.split(",", 4);
@@ -258,7 +263,7 @@ public class UtilsCSV {
      */
     public static List<String> caricaPreferiti(String username) {
         List<String> preferiti = new ArrayList<>();
-        String path = "data/preferiti.csv";
+        String path = PATH_RECENSIONI;
         File file = new File(path);
         if (!file.exists()) return preferiti;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -282,7 +287,7 @@ public class UtilsCSV {
      * @param ristorante Il ristorante da aggiungere ai preferiti.
      */
     public static void aggiungiPreferito(Utente utente, Ristorante ristorante) {
-        String path = "data/preferiti.csv";
+        String path = PATH_PREFERITI;
         //List<String> preferiti = caricaPreferiti(utente.getUsername());
         // Controlla se già presente per questo utente
         boolean giàPresente = false;
@@ -314,7 +319,7 @@ public class UtilsCSV {
      * @param ristorante Il ristorante da rimuovere dai preferiti.
      */
     public static void rimuoviPreferito(Utente utente, Ristorante ristorante) {
-        String path = "data/preferiti.csv";
+        String path = PATH_PREFERITI;
         List<String> lines = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
@@ -342,7 +347,7 @@ public class UtilsCSV {
      * @return La risposta alla recensione, o null se non esiste.
      */
     public static String getRispostaRecensione(String nomeRistorante, String ristoratore, String cliente) {
-        String path = "data/risposte.csv";
+        String path = PATH_RISPOSTE;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line = br.readLine(); // salta intestazione
             while ((line = br.readLine()) != null) {
@@ -369,7 +374,7 @@ public class UtilsCSV {
      * @param risposta La risposta da salvare.
      */
     public static void salvaRispostaRecensione(String nomeRistorante, String ristoratore, String cliente, String risposta) {
-        String path = "data/risposte.csv";
+        String path = PATH_RISPOSTE;
         List<String> lines = new ArrayList<>();
         boolean aggiornata = false;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {

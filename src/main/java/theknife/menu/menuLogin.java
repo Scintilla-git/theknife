@@ -63,7 +63,23 @@ public class menuLogin {
         System.out.print("Luogo di domicilio: ");
         String luogo = scanner.nextLine();
         System.out.print("Ruolo (1=Cliente, 2=Ristoratore): ");
-        int ruoloScelto = Integer.parseInt(scanner.nextLine());
+        int ruoloScelto = 1;
+        // Gesione errore in caso di input non valido per il ruolo
+        while (true) {
+            String tempRuolo = scanner.nextLine();
+            try {
+                ruoloScelto = Integer.parseInt(tempRuolo);
+                if (ruoloScelto == 1 || ruoloScelto == 2) {
+                    break;
+                } else {
+                    System.out.print("Ruolo non valido. Inserisci 1 per Cliente o 2 per Ristoratore: ");
+                }
+            } catch (NumberFormatException e) {
+                System.out.print("Input non valido. Inserisci 1 per Cliente o 2 per Ristoratore: ");
+        
+            }
+        }
+        // Assegnazione del ruolo in base alla scelta dell'utente
         Ruolo ruolo = ruoloScelto == 2 ? Ruolo.RISTORATORE : Ruolo.CLIENTE;
 
         Utente nuovo = new Utente(nome, cognome, username, LoginManager.hashPassword(password), null, luogo, ruolo);

@@ -6,6 +6,7 @@ import theknife.utils.UtilsRicerca;
 import theknife.model.Ristorante;
 import theknife.model.Recensione;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -37,153 +38,196 @@ public class menuCliente {
             switch (scelta) {
                 // CASO 1: Cerca ristorante
                 case "1":
-                    System.out.println("=== Ricerca ristorante ===");
-                    System.out.print("Nazione (invio per ignorare): ");
-                    String nazione = scanner.nextLine();
-                    if (nazione.isBlank()) nazione = null;
-                    System.out.print("Città (invio per ignorare): ");
-                    String citta = scanner.nextLine();
-                    if (citta.isBlank()) citta = null;
-                    System.out.print("Tipo cucina (invio per ignorare): ");
-                    String tipoCucina = scanner.nextLine();
-                    if (tipoCucina.isBlank()) tipoCucina = null;
-                    System.out.print("Fascia prezzo (invio per ignorare): ");
-                    String fasciaPrezzo = scanner.nextLine();
-                    if (fasciaPrezzo.isBlank()) fasciaPrezzo = null;
+                    boolean esciRicerca = false;
+                    while (!esciRicerca) {
+                        System.out.println("\n=== Ricerca ristorante ===");
+                        System.out.println("1. Ricerca per luogo");
+                        System.out.println("2. Ricerca per tipo di cucina");
+                        System.out.println("3. Ricerca per fascia di prezzo");
+                        System.out.println("4. Ricerca per asporto");
+                        System.out.println("5. Ricerca per prenotazione online");
+                        System.out.println("6. Ricerca per valutazione media");
+                        System.out.println("7. Ricerca combinata");
+                        System.out.println("0. Torna al menu principale");
+                        String sceltaRicerca = scanner.nextLine();
 
-                    // PATH del file CSV dei ristoranti
-                    List<Ristorante> ristoranti = UtilsCSV.caricaRistoranti("data/ristoranti.csv");
-                    // Filtra i ristoranti in base ai criteri inseriti
-                    List<Ristorante> risFiltro = UtilsRicerca.filtraCombinato(ristoranti, nazione, citta, tipoCucina, fasciaPrezzo);
+                        List<Ristorante> ristoranti = UtilsCSV.caricaRistoranti(UtilsCSV.PATH_RISTORANTI);
+                        List<Ristorante> risultati = new ArrayList<>();
 
-                    // Se non sono stati trovati ristoranti, informa l'utente
-                    if (risFiltro.isEmpty()) {
-                        System.out.println("Nessun ristorante trovato con i criteri specificati.");
-                    }
-                    // Altrimenti, mostra i ristoranti trovati
-                    else {
-                        int j = 0;
-                        System.out.println("Ristoranti trovati:");
-                        for (Ristorante r : risFiltro) {
-                            j++;
-                            System.out.println(j + ") " + r.getNome() + " - " + r.getCitta() + ", " + r.getNazione() + " - " + r.getTipoCucina() + " - Prezzo: " + r.getFasciaPrezzo());
-                        }
-                        System.out.print("Seleziona il numero di un ristorante per vedere i dettagli (0 per tornare indietro): ");
-                        String input = scanner.nextLine();
-                        // Scelto il ristorante, visualizza i dettagli
-                        try {
-                            int sceltaRist = Integer.parseInt(input);
-                            if (sceltaRist > 0 && sceltaRist <= risFiltro.size()) {
-                                Ristorante selezionato = risFiltro.get(sceltaRist - 1);
-                                System.out.println("\n--- Dettagli Ristorante ---");
-                                System.out.println("Nome: " + selezionato.getNome());
-                                System.out.println("Descrizione: " + (selezionato.getDescrizione() != null ? selezionato.getDescrizione() : "Nessuna descrizione"));
-                                System.out.println("Prezzo: " + selezionato.getFasciaPrezzo());
-                                System.out.println("Titolare: " + selezionato.getTitolare());
-
-                                boolean esciMenuRistorante = false;
-                                while (!esciMenuRistorante) {
-                                    System.out.println("\n--- Menu Ristorante ---");
-                                    System.out.println("1. Visualizza recensioni");
-                                    System.out.println("2. Crea recensione");
-                                    System.out.println("3. Modifica recensione");
-                                    System.out.println("4. Cancella recensione");
-                                    System.out.println("5. Aggiungi ai preferiti");
-                                    System.out.println("0. Torna indietro");
-                                    String sceltaRistMenu = scanner.nextLine();
-
-                                    // Carica recensioni e preferiti
-                                    List<Recensione> recensioni = UtilsCSV.caricaRecensioniPerRistorante(selezionato.getNome());
-                                    Recensione miaRecensione = recensioni.stream()
-                                        .filter(r -> r.getAutore().getUsername().equals(utente.getUsername()))
-                                        .findFirst().orElse(null);
-
-                                    switch (sceltaRistMenu) {
-                                        // CASO 1: Visualizza recensioni
-                                        case "1":
-                                            if (recensioni.isEmpty()) {
-                                                System.out.println("Nessuna recensione presente.");
-                                            } else {
-                                                System.out.println("--- Recensioni ---");
-                                                for (Recensione rec : recensioni) {
-                                                    System.out.println(rec.getAutore().getUsername() + " (" + rec.getValutazione() + "/5): " + rec.getCommento());
-                                                    String risposta = UtilsCSV.getRispostaRecensione(
-                                                        selezionato.getNome(),
-                                                        selezionato.getTitolare(),
-                                                        rec.getAutore().getUsername()
-                                                    );
-                                                    if (risposta != null) {
-                                                        System.out.println("  Risposta del ristoratore: " + risposta);
-                                                    }
-                                                }
-                                            }
-                                            break;
-                                        // CASO 2: Crea recensione
-                                        case "2":
-                                            if (miaRecensione != null) {
-                                                System.out.println("Hai già recensito questo ristorante. Modifica o cancella la tua recensione.");
-                                            } else {
-                                                System.out.print("Inserisci valutazione (1-5): ");
-                                                int voto = Integer.parseInt(scanner.nextLine());
-                                                System.out.print("Inserisci commento: ");
-                                                String commento = scanner.nextLine();
-                                                Recensione nuova = new Recensione(voto, commento, utente, selezionato);
-                                                UtilsCSV.salvaRecensione(nuova); // Implementa questo metodo
-                                                System.out.println("Recensione aggiunta!");
-                                            }
-                                            break;
-                                        // CASO 3: Modifica recensione
-                                        case "3":
-                                            if (miaRecensione == null) {
-                                                System.out.println("Non hai ancora recensito questo ristorante.");
-                                            } else {
-                                                System.out.print("Nuova valutazione (1-5): ");
-                                                int nuovoVoto = Integer.parseInt(scanner.nextLine());
-                                                System.out.print("Nuovo commento: ");
-                                                String nuovoCommento = scanner.nextLine();
-                                                miaRecensione.setValutazione(nuovoVoto);
-                                                miaRecensione.setCommento(nuovoCommento);
-                                                UtilsCSV.aggiornaRecensione(miaRecensione); // Implementa questo metodo
-                                                System.out.println("Recensione aggiornata!");
-                                            }
-                                            break;
-                                        // CASO 4: Cancella recensione
-                                        case "4":
-                                            if (miaRecensione == null) {
-                                                System.out.println("Non hai ancora recensito questo ristorante.");
-                                            } else {
-                                                UtilsCSV.cancellaRecensione(miaRecensione); // Implementa questo metodo
-                                                System.out.println("Recensione cancellata!");
-                                            }
-                                            break;
-                                        // CASO 5: Aggiungi ai preferiti
-                                        case "5":
-                                            UtilsCSV.aggiungiPreferito(utente, selezionato); // Implementa questo metodo
-                                            System.out.println("Ristorante aggiunto ai preferiti!");
-                                            break;
-                                        // CASO 0: Torna indietro
-                                        case "0":
-                                            esciMenuRistorante = true; // Esce solo dal menu ristorante
-                                            break;
-                                        // CASO DEFAULT: Scelta non valida
-                                        default:
-                                            System.out.println("Scelta non valida.");
-                                    }
-                                }
-                            } else if (sceltaRist == 0) {
-                                // Torna al menu precedente
-                            } else {
+                        switch (sceltaRicerca) {
+                            case "1":
+                                System.out.print("Nazione (invio per ignorare): ");
+                                String nazione = scanner.nextLine();
+                                if (nazione.isBlank()) nazione = null;
+                                System.out.print("Città (invio per ignorare): ");
+                                String citta = scanner.nextLine();
+                                if (citta.isBlank()) citta = null;
+                                System.out.print("Indirizzo (invio per ignorare): ");
+                                String indirizzo = scanner.nextLine();
+                                if (indirizzo.isBlank()) indirizzo = null;
+                                risultati = UtilsRicerca.filtraPerLuogo(ristoranti, nazione, citta, indirizzo);
+                                break;
+                            case "2":
+                                System.out.print("Tipo cucina: ");
+                                String tipoCucina = scanner.nextLine();
+                                risultati = UtilsRicerca.filtraPerTipoCucina(ristoranti, tipoCucina);
+                                break;
+                            case "3":
+                                System.out.print("Fascia prezzo: ");
+                                String fasciaPrezzo = scanner.nextLine();
+                                risultati = UtilsRicerca.filtraPerFasciaPrezzo(ristoranti, fasciaPrezzo);
+                                break;
+                            case "4":
+                                System.out.print("Solo ristoranti con asporto? (s/n): ");
+                                boolean asporto = scanner.nextLine().equalsIgnoreCase("s");
+                                risultati = UtilsRicerca.filtraPerAsporto(ristoranti, asporto);
+                                break;
+                            case "5":
+                                System.out.print("Solo ristoranti con prenotazione online? (s/n): ");
+                                boolean prenotazione = scanner.nextLine().equalsIgnoreCase("s");
+                                risultati = UtilsRicerca.filtraPerPrenotazioneOnline(ristoranti, prenotazione);
+                                break;
+                            case "6":
+                                System.out.print("Valutazione media minima (1-5): ");
+                                double minMedia = Double.parseDouble(scanner.nextLine());
+                                List<Recensione> tutteRec = UtilsCSV.caricaTutteRecensioni();
+                                risultati = UtilsRicerca.filtraPerValutazioneMedia(ristoranti, tutteRec, minMedia);
+                                break;
+                            case "7":
+                                System.out.print("Nazione (invio per ignorare): ");
+                                String naz = scanner.nextLine();
+                                if (naz.isBlank()) naz = null;
+                                System.out.print("Città (invio per ignorare): ");
+                                String cit = scanner.nextLine();
+                                if (cit.isBlank()) cit = null;
+                                System.out.print("Tipo cucina (invio per ignorare): ");
+                                String tipo = scanner.nextLine();
+                                if (tipo.isBlank()) tipo = null;
+                                System.out.print("Fascia prezzo (invio per ignorare): ");
+                                String fascia = scanner.nextLine();
+                                if (fascia.isBlank()) fascia = null;
+                                risultati = UtilsRicerca.filtraCombinato(ristoranti, naz, cit, tipo, fascia);
+                                break;
+                            case "0":
+                                esciRicerca = true;
+                                continue;
+                            default:
                                 System.out.println("Scelta non valida.");
+                                continue;
+                        }
+
+                        if (!esciRicerca) {
+                            if (risultati.isEmpty()) {
+                                System.out.println("Nessun ristorante trovato con i criteri specificati.");
+                            } else {
+                                int j = 0;
+                                System.out.println("Ristoranti trovati:");
+                                for (Ristorante r : risultati) {
+                                    j++;
+                                    System.out.println(j + ") " + r.getNome() + " - " + r.getCitta() + ", " + r.getNazione() + " - " + r.getTipoCucina() + " - Prezzo: " + r.getFasciaPrezzo());
+                                }
+                                System.out.print("Seleziona il numero di un ristorante per vedere i dettagli (0 per tornare indietro): ");
+                                String input = scanner.nextLine();
+                                try {
+                                    int sceltaRist = Integer.parseInt(input);
+                                    if (sceltaRist > 0 && sceltaRist <= risultati.size()) {
+                                        Ristorante selezionato = risultati.get(sceltaRist - 1);
+                                        System.out.println("\n--- Dettagli Ristorante ---");
+                                        System.out.println("Nome: " + selezionato.getNome());
+                                        System.out.println("Descrizione: " + (selezionato.getDescrizione() != null ? selezionato.getDescrizione() : "Nessuna descrizione"));
+                                        System.out.println("Prezzo: " + selezionato.getFasciaPrezzo());
+                                        System.out.println("Titolare: " + selezionato.getTitolare());
+
+                                        boolean esciMenuRistorante = false;
+                                        while (!esciMenuRistorante) {
+                                            System.out.println("\n--- Menu Ristorante ---");
+                                            System.out.println("1. Visualizza recensioni");
+                                            System.out.println("2. Crea recensione");
+                                            System.out.println("3. Modifica recensione");
+                                            System.out.println("4. Cancella recensione");
+                                            System.out.println("5. Aggiungi ai preferiti");
+                                            System.out.println("0. Torna indietro");
+                                            String sceltaRistMenu = scanner.nextLine();
+
+                                            // Carica recensioni e preferiti
+                                            List<Recensione> recensioni = UtilsCSV.caricaRecensioniPerRistorante(selezionato.getNome());
+                                            Recensione miaRecensione = recensioni.stream()
+                                                .filter(r -> r.getAutore().getUsername().equals(utente.getUsername()))
+                                                .findFirst().orElse(null);
+
+                                            switch (sceltaRistMenu) {
+                                                // CASO 1: Visualizza recensioni
+                                                case "1":
+                                                    if (recensioni.isEmpty()) {
+                                                        System.out.println("Nessuna recensione presente.");
+                                                    } else {
+                                                        System.out.println("--- Recensioni ---");
+                                                        for (Recensione rec : recensioni) {
+                                                            System.out.println(rec.getAutore().getUsername() + " (" + rec.getValutazione() + "/5): " + rec.getCommento());
+                                                            String risposta = UtilsCSV.getRispostaRecensione(
+                                                                selezionato.getNome(),
+                                                                selezionato.getTitolare(),
+                                                                rec.getAutore().getUsername()
+                                                            );
+                                                            if (risposta != null) {
+                                                                System.out.println("  Risposta del ristoratore: " + risposta);
+                                                            }
+                                                        }
+                                                    }
+                                                    break;
+                                                // CASO 2: Crea recensione
+                                                case "2":
+                                                    if (miaRecensione != null) {
+                                                        System.out.println("Hai già recensito questo ristorante. Modifica o cancella la tua recensione.");
+                                                    } else {
+                                                        aggiungiRecensione(scanner, utente, selezionato);
+                                                    }
+                                                    break;
+                                                // CASO 3: Modifica recensione
+                                                case "3":
+                                                    if (miaRecensione == null) {
+                                                        System.out.println("Non hai ancora recensito questo ristorante.");
+                                                    } else {
+                                                        modificaRecensione(scanner, miaRecensione);
+                                                    }
+                                                    break;
+                                                // CASO 4: Cancella recensione
+                                                case "4":
+                                                    if (miaRecensione == null) {
+                                                        System.out.println("Non hai ancora recensito questo ristorante.");
+                                                    } else {
+                                                        cancellaRecensione(miaRecensione);
+                                                    }
+                                                    break;
+                                                // CASO 5: Aggiungi ai preferiti
+                                                case "5":
+                                                    UtilsCSV.aggiungiPreferito(utente, selezionato);
+                                                    System.out.println("Ristorante aggiunto ai preferiti!");
+                                                    break;
+                                                // CASO 0: Torna indietro
+                                                case "0":
+                                                    esciMenuRistorante = true;
+                                                    break;
+                                                // CASO DEFAULT: Scelta non valida
+                                                default:
+                                                    System.out.println("Scelta non valida.");
+                                            }
+                                        }
+                                    } else if (sceltaRist == 0) {
+                                        // Torna al menu precedente
+                                    } else {
+                                        System.out.println("Scelta non valida.");
+                                    }
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Input non valido.");
+                                }
                             }
-                        } catch (NumberFormatException e) {
-                            System.out.println("Input non valido.");
                         }
                     }
                     break;
 
                 // CASO 2: Lista preferiti
                 case "2":
-                    // Carica i ristoranti preferiti dell'utente
                     System.out.println("=== Lista dei preferiti ===");
                     List<String> preferiti = UtilsCSV.caricaPreferiti(utente.getUsername());
                     // Se non ci sono preferiti, informa l'utente
@@ -214,7 +258,7 @@ public class menuCliente {
                             } else if (sceltaPref > 0 && sceltaPref <= preferiti.size()) {
                                 String nomeRist = preferiti.get(sceltaPref - 1);
                                 // Carica il ristorante selezionato
-                                Ristorante selezionato = UtilsCSV.caricaRistoranti("data/ristoranti.csv")
+                                Ristorante selezionato = UtilsCSV.caricaRistoranti(UtilsCSV.PATH_RISTORANTI)
                                         .stream().filter(r -> r.getNome().equals(nomeRist)).findFirst().orElse(null);
                                 if (selezionato == null) {
                                     System.out.println("Ristorante non trovato.");
@@ -243,13 +287,7 @@ public class menuCliente {
                                             if (miaRecensione != null) {
                                                 System.out.println("Hai già recensito questo ristorante. Modifica o cancella la tua recensione.");
                                             } else {
-                                                System.out.print("Inserisci valutazione (1-5): ");
-                                                int voto = Integer.parseInt(scanner.nextLine());
-                                                System.out.print("Inserisci commento: ");
-                                                String commento = scanner.nextLine();
-                                                Recensione nuova = new Recensione(voto, commento, utente, selezionato);
-                                                UtilsCSV.salvaRecensione(nuova);
-                                                System.out.println("Recensione aggiunta!");
+                                                aggiungiRecensione(scanner, utente, selezionato);
                                             }
                                             break;
                                         // CASO 2: Modifica recensione
@@ -257,14 +295,7 @@ public class menuCliente {
                                             if (miaRecensione == null) {
                                                 System.out.println("Non hai ancora recensito questo ristorante.");
                                             } else {
-                                                System.out.print("Nuova valutazione (1-5): ");
-                                                int nuovoVoto = Integer.parseInt(scanner.nextLine());
-                                                System.out.print("Nuovo commento: ");
-                                                String nuovoCommento = scanner.nextLine();
-                                                miaRecensione.setValutazione(nuovoVoto);
-                                                miaRecensione.setCommento(nuovoCommento);
-                                                UtilsCSV.aggiornaRecensione(miaRecensione);
-                                                System.out.println("Recensione aggiornata!");
+                                                modificaRecensione(scanner, miaRecensione);
                                             }
                                             break;
                                         // CASO 3: Cancella recensione
@@ -272,8 +303,7 @@ public class menuCliente {
                                             if (miaRecensione == null) {
                                                 System.out.println("Non hai ancora recensito questo ristorante.");
                                             } else {
-                                                UtilsCSV.cancellaRecensione(miaRecensione);
-                                                System.out.println("Recensione cancellata!");
+                                                cancellaRecensione(miaRecensione);
                                             }
                                             break;
                                         // CASO 4: Rimuovi dai preferiti
@@ -326,7 +356,7 @@ public class menuCliente {
                         break;
                     }
                     // Carica i ristoranti nella zona del domicilio dell'utente
-                    List<Ristorante> tuttiRistorantiZona = UtilsCSV.caricaRistoranti("data/ristoranti.csv");
+                    List<Ristorante> tuttiRistorantiZona = UtilsCSV.caricaRistoranti(UtilsCSV.PATH_RISTORANTI);
                     List<Ristorante> filtratiZona = UtilsRicerca.filtraCombinato(tuttiRistorantiZona, null, domicilio, null, null);
 
                     // Se non sono stati trovati ristoranti, informa l'utente
@@ -397,13 +427,7 @@ public class menuCliente {
                                             if (miaRecensione != null) {
                                                 System.out.println("Hai già recensito questo ristorante. Modifica o cancella la tua recensione.");
                                             } else {
-                                                System.out.print("Inserisci valutazione (1-5): ");
-                                                int voto = Integer.parseInt(scanner.nextLine());
-                                                System.out.print("Inserisci commento: ");
-                                                String commento = scanner.nextLine();
-                                                Recensione nuova = new Recensione(voto, commento, utente, selezionato);
-                                                UtilsCSV.salvaRecensione(nuova);
-                                                System.out.println("Recensione aggiunta!");
+                                                aggiungiRecensione(scanner, utente, selezionato);
                                             }
                                             break;
                                         // CASO 3: Modifica recensione
@@ -411,14 +435,7 @@ public class menuCliente {
                                             if (miaRecensione == null) {
                                                 System.out.println("Non hai ancora recensito questo ristorante.");
                                             } else {
-                                                System.out.print("Nuova valutazione (1-5): ");
-                                                int nuovoVoto = Integer.parseInt(scanner.nextLine());
-                                                System.out.print("Nuovo commento: ");
-                                                String nuovoCommento = scanner.nextLine();
-                                                miaRecensione.setValutazione(nuovoVoto);
-                                                miaRecensione.setCommento(nuovoCommento);
-                                                UtilsCSV.aggiornaRecensione(miaRecensione); 
-                                                System.out.println("Recensione aggiornata!");
+                                                modificaRecensione(scanner, miaRecensione);
                                             }
                                             break;
                                         // CASO 4: Cancella recensione
@@ -426,13 +443,12 @@ public class menuCliente {
                                             if (miaRecensione == null) {
                                                 System.out.println("Non hai ancora recensito questo ristorante.");
                                             } else {
-                                                UtilsCSV.cancellaRecensione(miaRecensione); 
-                                                System.out.println("Recensione cancellata!");
+                                                cancellaRecensione(miaRecensione);
                                             }
                                             break;
                                         // CASO 5: Aggiungi ai preferiti
                                         case "5":
-                                            UtilsCSV.aggiungiPreferito(utente, selezionato); 
+                                            UtilsCSV.aggiungiPreferito(utente, selezionato);
                                             System.out.println("Ristorante aggiunto ai preferiti!");
                                             break;
                                         // CASO 0: Torna indietro
@@ -465,5 +481,70 @@ public class menuCliente {
                     System.out.println("Scelta non valida.");
             }
         }
+    }
+
+    // --- Metodi di utilità per evitare duplicazione ---
+    // Priore a questa modifica, per chi sta leggendo, non ha idea di quanta ridondanza ci fosse in questo codice.
+
+    /**
+     * Aggiunge una recensione per un ristorante selezionato.<br>
+     * Chiede all'utente di inserire un voto e un commento, poi salva la recensione nel file CSV.<br>
+     * @param scanner
+     * @param utente
+     * @param selezionato
+     */
+    private static void aggiungiRecensione(Scanner scanner, Utente utente, Ristorante selezionato) {
+        int voto;
+        while (true) {
+            System.out.print("Inserisci valutazione (1-5): ");
+            try {
+                voto = Integer.parseInt(scanner.nextLine());
+                if (voto >= 1 && voto <= 5) break;
+                else System.out.println("La valutazione deve essere compresa tra 1 e 5.");
+            } catch (NumberFormatException e) {
+                System.out.println("Input non valido. Inserisci un numero tra 1 e 5.");
+            }
+        }
+        System.out.print("Inserisci commento: ");
+        String commento = scanner.nextLine();
+        Recensione nuova = new Recensione(voto, commento, utente, selezionato);
+        UtilsCSV.salvaRecensione(nuova);
+        System.out.println("Recensione aggiunta!");
+    }
+
+    /**
+     * Modifica una recensione esistente.<br>
+     * Chiede all'utente di inserire un nuovo voto e un nuovo commento, poi aggiorna la recensione nel file CSV.<br>
+     * @param scanner
+     * @param miaRecensione
+     */
+    private static void modificaRecensione(Scanner scanner, Recensione miaRecensione) {
+        int nuovoVoto;
+        while (true) {
+            System.out.print("Nuova valutazione (1-5): ");
+            try {
+                nuovoVoto = Integer.parseInt(scanner.nextLine());
+                if (nuovoVoto >= 1 && nuovoVoto <= 5) break;
+                else System.out.println("La valutazione deve essere compresa tra 1 e 5.");
+            } catch (NumberFormatException e) {
+                System.out.println("Input non valido. Inserisci un numero tra 1 e 5.");
+            }
+        }
+        System.out.print("Nuovo commento: ");
+        String nuovoCommento = scanner.nextLine();
+        miaRecensione.setValutazione(nuovoVoto);
+        miaRecensione.setCommento(nuovoCommento);
+        UtilsCSV.aggiornaRecensione(miaRecensione);
+        System.out.println("Recensione aggiornata!");
+    }
+
+    /**
+     * Cancella una recensione esistente.<br>
+     * Rimuove la recensione dal file CSV.<br>
+     * @param miaRecensione
+     */
+    private static void cancellaRecensione(Recensione miaRecensione) {
+        UtilsCSV.cancellaRecensione(miaRecensione);
+        System.out.println("Recensione cancellata!");
     }
 }
